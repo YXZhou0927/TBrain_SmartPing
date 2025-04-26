@@ -1,0 +1,21 @@
+name: smart-ping-env
+channels:
+  - conda-forge
+dependencies:
+  - python=3.9
+  - pip
+  - numpy
+  - pandas
+  - scikit-learn
+  - xgboost
+  - lightgbm
+  - catboost
+  - matplotlib
+  - seaborn
+  - jupyterlab
+  - pytorch
+  - torchvision
+  - torchaudio
+  - pip:
+    - optuna
+    - kaggle

@@ -1,0 +1,4 @@
+# 參數設定範例
+data:
+  raw_dir: data/raw
+  processed_dir: data/processed
