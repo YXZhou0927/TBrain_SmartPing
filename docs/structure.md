@@ -1,5 +1,6 @@
 ## Project Structure
 
+```text
 TBrain_Play
 ├── config
 │   └── default.yaml
@@ -29,3 +30,4 @@ TBrain_Play
 └── environment.yml
 
 17 directories, 9 files
+```
