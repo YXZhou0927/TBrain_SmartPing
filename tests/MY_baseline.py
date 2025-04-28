@@ -1,4 +1,3 @@
-#baseline 0.78
 import pandas as pd
 import numpy as np
 from pathlib import Path
@@ -13,12 +12,11 @@ class BadmintonPredictor:
     def __init__(self):
         self.all_models = {}  # 保存所有CV模型
         self.all_scores = {}  # 保存所有CV分數
-        self.all_corrections = {}  # 保存所有預測校正標記
         self.scaler = MinMaxScaler()
         self.cv_splits_map = {
             'gender': 8,
-            'hold_racket_handed': 7,
-            'play_years': 8,
+            'hold_racket_handed': 5,
+            'play_years': 5,
             'level': 3
         }
     
@@ -68,21 +66,22 @@ class BadmintonPredictor:
         else:
             return X, unique_ids
     
-    def get_predictions(self, model, X, task):
-        """統一的預測函數"""
-        if task in ['gender', 'hold_racket_handed']:
-            proba = model.predict_proba(X)
-            return proba[:, 0]  # 返回原始類別1的機率
-        else:
-            return model.predict_proba(X)
+    def get_predictions(self, model, X):
+        """統一的預測函數 - 現在所有任務都返回所有類別的機率"""
+        return model.predict_proba(X)
     
     def calculate_auc(self, y_true, y_pred, task):
         """統一的AUC計算函數"""
         if task in ['gender', 'hold_racket_handed']:
-            y_true_binary = (y_true == 1).astype(int)
-            auc = roc_auc_score(y_true_binary, y_pred)
-            if auc < 0.5:
-                auc = 1 - auc
+            # 二元分類 - 使用一致的方法處理
+            # 建立 one-hot 編碼
+            n_classes = 2
+            y_true_onehot = np.zeros((len(y_true), n_classes))
+            for i, label in enumerate(y_true):
+                y_true_onehot[i, int(label)-1] = 1
+            
+            # 計算 AUC
+            auc = roc_auc_score(y_true_onehot, y_pred, average='micro', multi_class='ovr')
         else:
             # 多類別處理
             if task == 'play_years':
@@ -122,7 +121,6 @@ class BadmintonPredictor:
             skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
             fold_scores = []
             fold_models = []
-            fold_corrections = []
             
             for fold, (train_players_idx, val_players_idx) in enumerate(skf.split(unique_players, player_labels)):
                 train_players = unique_players[train_players_idx]
@@ -140,39 +138,26 @@ class BadmintonPredictor:
                 
                 model = RandomForestClassifier(n_estimators=100, random_state=42)
                 
-                if task in ['gender', 'hold_racket_handed']:
-                    y_train_encoded = (y_train - 1)
-                    model.fit(X_train, y_train_encoded)
-                else:
-                    model.fit(X_train, y_train)
+                # 直接使用原始標籤，不進行變換
+                model.fit(X_train, y_train)
                 
-                val_predictions = self.get_predictions(model, X_val, task)
+                # 獲取所有類別的預測機率
+                val_predictions = self.get_predictions(model, X_val)
                 
-                # 檢查是否需要反轉預測
-                needs_correction = False
-                if task in ['gender', 'hold_racket_handed']:
-                    y_true_binary = (y_val == 1).astype(int)
-                    auc = roc_auc_score(y_true_binary, val_predictions)
-                    if auc < 0.5:
-                        auc = 1 - auc
-                        needs_correction = True
-                        print(f"  Fold {fold + 1} needs correction for {task}")
-                else:
-                    auc = self.calculate_auc(y_val, val_predictions, task)
+                # 計算 AUC
+                auc = self.calculate_auc(y_val, val_predictions, task)
                 
                 fold_scores.append(auc)
                 fold_models.append(model)
-                fold_corrections.append(needs_correction)
                 print(f"  Fold {fold + 1}/{n_splits} - AUC: {auc:.4f}")
             
             avg_score = np.mean(fold_scores)
             task_scores[task] = avg_score
             print(f"  Average AUC for {task}: {avg_score:.4f}")
             
-            # 保存所有模型、分數和校正標記
+            # 保存所有模型和分數
             self.all_models[task] = fold_models
             self.all_scores[task] = fold_scores
-            self.all_corrections[task] = fold_corrections
         
         final_score = np.mean(list(task_scores.values()))
         print(f"\nFinal Cross-Validation Score: {final_score:.4f}")
@@ -192,7 +177,6 @@ class BadmintonPredictor:
         for task in ['gender', 'hold_racket_handed', 'play_years', 'level']:
             models = self.all_models[task]
             scores = self.all_scores[task]
-            corrections = self.all_corrections[task]
             
             # 為每個模型計算權重（基於AUC）
             weights = np.array(scores)
@@ -201,38 +185,34 @@ class BadmintonPredictor:
             # 收集每個模型的預測
             all_preds = []
             for i, model in enumerate(models):
-                pred = self.get_predictions(model, X_test_scaled, task)
-                
-                # 如果需要校正，則反轉預測
-                if task in ['gender', 'hold_racket_handed'] and corrections[i]:
-                    pred = 1 - pred
-                    print(f"Applying correction for {task} model {i+1}")
-                
+                pred = self.get_predictions(model, X_test_scaled)
                 all_preds.append(pred)
             
-            # 加權平均
-            if task in ['gender', 'hold_racket_handed']:
-                # 二元分類：直接加權平均
-                weighted_pred = np.zeros_like(all_preds[0])
-                for i, pred in enumerate(all_preds):
-                    weighted_pred += weights[i] * pred
-            else:
-                # 多類別分類：對每個類別進行加權平均
-                weighted_pred = np.zeros_like(all_preds[0])
-                for i, pred in enumerate(all_preds):
-                    weighted_pred += weights[i] * pred
+            # 加權平均 - 對每個類別進行加權平均
+            # 假設第一個模型的預測形狀為參考
+            n_samples, n_classes = all_preds[0].shape
+            weighted_pred = np.zeros((n_samples, n_classes))
+            
+            for i, pred in enumerate(all_preds):
+                weighted_pred += weights[i] * pred
             
             predictions[task] = weighted_pred
-            print(f"Weighted prediction for {task} using {len(models)} models with weights: {weights}")
         
         # 創建提交檔案
         submission = pd.DataFrame({'unique_id': test_unique_ids})
-        submission['gender'] = predictions['gender']
-        submission['hold racket handed'] = predictions['hold_racket_handed']
         
+        # 針對每個任務選擇正確的輸出
+        # 性別：取第一個類別的機率 (男性=1的機率)
+        submission['gender'] = predictions['gender'][:, 0]
+        
+        # 持拍手：取第一個類別的機率 (右手=1的機率)
+        submission['hold racket handed'] = predictions['hold_racket_handed'][:, 0]
+        
+        # 打球年資：取每個類別的機率
         for i in range(3):
             submission[f'play years_{i}'] = predictions['play_years'][:, i]
         
+        # 水平級別：取每個類別的機率
         for level in [2, 3, 4, 5]:
             submission[f'level_{level}'] = predictions['level'][:, level-2]
         
