@@ -178,18 +178,15 @@ cython_debug/
 project-env/
 
 # Ignore raw and processed data, large models, and output directories
-data/raw/
-data/processed/
-models/
-outputs/
-tests/feature_eda/results/assets/
+data/raw/**
+data/processed/**
+models/**
+outputs/**
+tests/feature_eda/results/assets/**
 tests/feature_eda/results/data.csv
-!data/raw/**/.gitkeep
-!data/processed/**/.gitkeep
-!models/**.gitkeep
-!outputs/**.gitkeep
-!tests/feature_eda/results/assets/.gitkeep
 
 # Ignore VS Code and IDE configuration files
 .vscode/
 .idea/
+
+!**/.gitkeep
