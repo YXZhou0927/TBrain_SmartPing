@@ -75,6 +75,7 @@ def plot_time_series():
         data = None
         data = pd.read_csv(txt_path, sep='\s+', header=None,
                         names=['Ax', 'Ay', 'Az', 'Gx', 'Gy', 'Gz'])
+        data = data[['Ax', 'Ay', 'Az']]
 
         fig, ax = plt.subplots(figsize=(10, 6))
         for col in data.columns:
