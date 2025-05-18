@@ -1,0 +1,50 @@
+2025-05-18 01:24:01,041 - Function 'apply_pca' called with args=(), kwargs={}
+2025-05-18 01:24:01,180 - PCA Top 10 MI scores:
+4    0.130927
+0    0.112527
+1    0.097735
+2    0.081867
+3    0.065328
+dtype: float64
+2025-05-18 01:24:17,419 - Function 'apply_ica' called with args=(), kwargs={}
+2025-05-18 01:24:17,570 - ICA Top 10 MI scores:
+4    0.145864
+2    0.110408
+1    0.096428
+0    0.046392
+3    0.031577
+dtype: float64
+2025-05-18 01:24:23,202 - Function 'apply_pca' called with args=(), kwargs={}
+2025-05-18 01:24:23,268 - PCA Top 10 MI scores:
+4    0.130927
+0    0.112527
+1    0.097735
+2    0.081867
+3    0.065328
+dtype: float64
+2025-05-18 01:24:26,778 - Function 'apply_poly' called with args=(), kwargs={}
+2025-05-18 01:26:56,720 - PolynomialFeatures Top 10 MI scores:
+13464    0.347818
+13463    0.308372
+1990     0.302286
+539      0.301875
+13477    0.291674
+13465    0.290005
+540      0.287695
+13467    0.282957
+4811     0.282330
+4025     0.281904
+dtype: float64
+2025-05-18 01:38:44,903 - Function 'apply_poly' called with args=(), kwargs={}
+2025-05-18 01:41:06,929 - PolynomialFeatures Top 10 MI scores:
+feat_0_73_gx_trend_mean feat_0_107_gy_seasonal_var        0.347818
+feat_0_73_gx_trend_mean feat_0_106_gy_seasonal_std        0.308372
+feat_0_8_ax_trend_energy feat_0_73_gx_trend_mean          0.302286
+feat_0_1_ax_trend_mean feat_0_106_gy_seasonal_std         0.301875
+feat_0_73_gx_trend_mean feat_0_120_gy_resid_complexity    0.291674
+feat_0_73_gx_trend_mean feat_0_108_gy_seasonal_max        0.290005
+feat_0_1_ax_trend_mean feat_0_107_gy_seasonal_var         0.287695
+feat_0_73_gx_trend_mean feat_0_110_gy_seasonal_ptp        0.282957
+feat_0_22_ax_resid_rms feat_0_73_gx_trend_mean            0.282330
+feat_0_18_ax_resid_std feat_0_73_gx_trend_mean            0.281904
+dtype: float64
