@@ -9,8 +9,8 @@ from pathlib import Path
 
 # === 讀取資料 ===
 MAIN_DIR = Path('~/TBrain_SmartPing')
-CSV_PATH = MAIN_DIR / 'tests' / 'feature_eda' / 'TimeFreqFeatures' / 'Results3' / 'train.csv'
-#CSV_PATH = MAIN_DIR / 'data' / 'processed' / '39_Training_Dataset' / 'train.csv'
+#CSV_PATH = MAIN_DIR / 'tests' / 'feature_eda' / 'TimeSeriesFeatures' / 'Results6' / 'train_all.csv'
+CSV_PATH = MAIN_DIR / 'data' / 'processed' / 'TimeSeriesFeaturesV5' / 'TrainingData' / 'train_all.csv'
 df = pd.read_csv(str(CSV_PATH))
 categorical_targets = ["player_id", "mode", "gender", "hold_racket_handed", "play_years", "level"]
 ordered_targets = ["play_years", "level"]

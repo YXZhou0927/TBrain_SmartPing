@@ -42,8 +42,8 @@ def generate_training_data():
 
     try:
         df = pd.read_csv(meta_file_path)
-        #df = df[['unique_id', 'player_id', 'mode', 'gender', 'hold racket handed', 'play years', 'level']]
-        df = df[['unique_id', 'mode']]
+        df = df[['unique_id', 'player_id', 'mode', 'gender', 'hold racket handed', 'play years', 'level']]
+        #df = df[['unique_id', 'mode']]
         df.columns = [col.strip().replace(' ', '_') for col in df.columns]  # 替換欄位名稱中的空白
         feature_rows = []
         all_column_names = []

@@ -4,18 +4,33 @@ import os
 import pandas as pd
 import threading
 from concurrent.futures import ProcessPoolExecutor, as_completed
-from generate_features import generate_features
+from tests.feature_eda.TimeSeriesFeatures.Code.generate_features import generate_features
 import numpy as np
 import re
+import logging
+
+# setup logging and record the log
+log_dir = os.path.join(os.path.dirname(__file__), "logs")
+if not os.path.exists(log_dir):
+    os.makedirs(log_dir)
+log_file = os.path.join(log_dir, "feature_generation.log")
+logging.basicConfig(
+    filename=log_file,
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+logging.info("Feature generation started.")
+logging.info("Log file created at: %s", log_file)
 
 def parse_cut_point(cut_str):
     # 移除中括號與多餘空白，使用 re 將數字提取出來
     return list(map(int, re.findall(r'\d+', str(cut_str))))
 
 # === 全局變數 ===
-meta_path = ""
-data_folder = ""
-output_folder = ""
+meta_path = r"/home/yanxunzhou/TBrain_SmartPing/data/raw/39_Training_Dataset/train_info.csv"
+data_folder = r"/home/yanxunzhou/TBrain_SmartPing/data/raw/39_Training_Dataset/train_data"
+output_folder = r"/home/yanxunzhou/TBrain_SmartPing/tests/feature_eda/TimeSeriesFeatures/Results5"
 
 root = tk.Tk()
 root.title("Wavelet Feature Generator")
@@ -55,6 +70,8 @@ def run_generation_parallel():
     os.makedirs(image_dir, exist_ok=True)
 
     df = pd.read_csv(meta_path)
+    df['unique_id'] = df['unique_id'].astype(str)
+    df = df.drop(columns=['cut_point'], errors='ignore')  # 移除不必要的欄位
     #df = df[['unique_id', 'player_id', 'mode', 'gender', 'hold_racket_handed', 'play_years', 'level', 'cut_point']]
 
     futures = []
@@ -65,19 +82,28 @@ def run_generation_parallel():
     progress_label.config(text="Starting...")
 
     def task():
+        futures = []
         with ProcessPoolExecutor(max_workers=max_workers) as executor:
             for _, row in df.iterrows():
                 uid = row['unique_id']
                 txt_file = os.path.join(data_folder, f"{uid}.txt")
                 #out_csv = os.path.join(feature_dir, f"{uid}.csv")
                 #out_png = os.path.join(image_dir, f"{uid}.png")
-                
+
+                logging.info(f"Processing {uid}...")
                 if os.path.exists(txt_file):
-                    cut_point = parse_cut_point(row['cut_point'])  # 轉為 list[int]
+                    logging.info(f"Input file: {txt_file}")
+                    logging.info(f"Output feature dir: {feature_dir}")
+                    logging.info(f"Output image dir: {image_dir}")
+                
+                    #cut_point = parse_cut_point(row['cut_point'])  # 轉為 list[int]
                     futures.append(executor.submit(
                         generate_features,
-                        txt_file, feature_dir, image_dir, uid, cut_point
+                        uid, txt_file, feature_dir, None # None -> Do not save images
                     ))
+                else:
+                    logging.warning(f"File not found: {txt_file}")
+                    messagebox.showwarning("Warning", f"File not found: {txt_file}")   
 
             for i, _ in enumerate(as_completed(futures)):
                 progress_bar['value'] = i + 1
