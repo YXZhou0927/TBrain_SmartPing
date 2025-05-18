@@ -185,7 +185,8 @@ outputs/**
 tests/feature_eda/results/assets/**
 tests/feature_eda/results/data.csv
 tests/feature_eda/TimeFreqFeatures/**
-tests/feature_eda/TimeSeriesFeatures/Results/**
+tests/feature_eda/TimeSeriesFeatures/Results*/**
+tests/feature_eda/TimeSeriesFeatures/Test/**
 
 # Ignore VS Code and IDE configuration files
 .vscode/

@@ -1,7 +1,7 @@
 ## Project Structure
 
 ```text
-TBrain_Play
+TBrain_SmartPing
 ├── config
 │   └── default.yaml
 ├── data
