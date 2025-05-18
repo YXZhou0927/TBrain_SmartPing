@@ -1,0 +1,11 @@
+new_feature,feature_1,feature_2
+feat_73_107,gx_trend_mean,gy_seasonal_var
+feat_73_106,gx_trend_mean,gy_seasonal_std
+feat_8_73,ax_trend_energy,gx_trend_mean
+feat_1_106,ax_trend_mean,gy_seasonal_std
+feat_73_120,gx_trend_mean,gy_resid_complexity
+feat_73_108,gx_trend_mean,gy_seasonal_max
+feat_1_107,ax_trend_mean,gy_seasonal_var
+feat_73_110,gx_trend_mean,gy_seasonal_ptp
+feat_22_73,ax_resid_rms,gx_trend_mean
+feat_18_73,ax_resid_std,gx_trend_mean

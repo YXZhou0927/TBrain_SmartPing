@@ -101,10 +101,21 @@ class BadmintonPredictor:
         return auc
     
     def cross_validate(self):
+
+        # === 篩選 cut_point 最後一個數字 >= 2000 的資料 ===
+        def last_cut_point_valid(cut_point_str):
+            try:
+                # 去除中括號並轉為整數 list
+                cut_list = list(map(int, cut_point_str.strip("[]").split()))
+                return len(cut_list) > 0 and cut_list[-1] >= 2000
+            except Exception:
+                return False  # 若有錯誤則移除
+            
         """執行交叉驗證並保存所有模型"""
-        train_info_path = Path('data/raw/39_Training_Dataset/train_info.csv')
-        data_dir = Path('data/processed/TimeSeriesFeatures/TrainingData/features')
+        train_info_path = Path('data/raw/39_Training_Dataset/train_info_NramalSignals_V2.csv')
+        data_dir = Path('data/processed/TimeSeriesFeaturesV5/TrainingData/features')
         info = pd.read_csv(str(train_info_path))
+        #info = info[info["cut_point"].apply(last_cut_point_valid)].reset_index(drop=True)
         X, y_df = self.prepare_data(info, str(data_dir))
         X_scaled = self.scaler.fit_transform(X)
         
@@ -171,7 +182,7 @@ class BadmintonPredictor:
         """生成提交檔案，使用所有CV模型的加權集成"""
         # 測試資料
         test_info_path = Path('data/raw/39_Test_Dataset/test_info.csv')
-        test_data_dir = Path('data/processed/TimeSeriesFeatures/TestingData/features')
+        test_data_dir = Path('data/processed/TimeSeriesFeaturesV5/TestingData/features')
         test_info = pd.read_csv(str(test_info_path))
         X_test, test_unique_ids = self.prepare_data(pd.DataFrame(), str(test_data_dir))
         X_test_scaled = self.scaler.transform(X_test)
