@@ -1,0 +1,27 @@
+{
+    "task_name": "level",
+    "best_auc": 0.809964056669493,
+    "best_scaler": "yeo-johnson",
+    "best_params": {
+        "max_depth": 4,
+        "eta": 0.09477806925885347,
+        "subsample": 0.6434097378172835,
+        "colsample_bytree": 0.7479536708233895,
+        "min_child_weight": 5,
+        "gamma": 3.1674495960275966,
+        "random_state": 42,
+        "max_delta_step": 2,
+        "tree_method": "hist",
+        "device": "cuda",
+        "objective": "multi:softprob",
+        "num_class": 4,
+        "eval_metric": "mlogloss"
+    },
+    "fold_summary": [
+        0.8606978153942957,
+        0.7731471168205407,
+        0.8142295767828434,
+        0.8579278207416221,
+        0.7438179536081634
+    ]
+}

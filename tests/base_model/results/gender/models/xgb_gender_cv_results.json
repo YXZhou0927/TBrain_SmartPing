@@ -1,0 +1,26 @@
+{
+    "task_name": "gender",
+    "best_auc": 0.8877246527189262,
+    "best_scaler": "robust",
+    "best_params": {
+        "max_depth": 12,
+        "eta": 0.10346977573710904,
+        "subsample": 0.6948102710693217,
+        "colsample_bytree": 0.8340377219088546,
+        "min_child_weight": 9,
+        "gamma": 0.30113433416275426,
+        "random_state": 42,
+        "scale_pos_weight": 1.0138455942486662,
+        "tree_method": "hist",
+        "device": "cuda",
+        "objective": "binary:logistic",
+        "eval_metric": "auc"
+    },
+    "fold_summary": [
+        0.5378693558067669,
+        0.997697520561443,
+        0.9718417095470436,
+        0.9900758657372414,
+        0.941138811942136
+    ]
+}

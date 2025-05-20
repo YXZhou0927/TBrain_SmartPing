@@ -1,0 +1,27 @@
+{
+    "task_name": "play_years",
+    "best_auc": 0.677669481228732,
+    "best_scaler": "yeo-johnson",
+    "best_params": {
+        "max_depth": 12,
+        "eta": 0.26719146969790125,
+        "subsample": 0.9578916650853092,
+        "colsample_bytree": 0.8553884805373171,
+        "min_child_weight": 4,
+        "gamma": 3.3489970991124425,
+        "random_state": 42,
+        "max_delta_step": 1,
+        "tree_method": "hist",
+        "device": "cuda",
+        "objective": "multi:softprob",
+        "num_class": 3,
+        "eval_metric": "mlogloss"
+    },
+    "fold_summary": [
+        0.6072876205575374,
+        0.8327044676126314,
+        0.794205302091116,
+        0.712033436594815,
+        0.44211657928756104
+    ]
+}
