@@ -1,0 +1,26 @@
+{
+    "task_name": "hold_racket_handed",
+    "best_auc": 0.9958107956325947,
+    "best_scaler": "robust",
+    "best_params": {
+        "max_depth": 9,
+        "eta": 0.21363963351414378,
+        "subsample": 0.7719902304639765,
+        "colsample_bytree": 0.6330311652997798,
+        "min_child_weight": 3,
+        "gamma": 2.1410591584148007,
+        "random_state": 42,
+        "scale_pos_weight": 3.422005434192276,
+        "tree_method": "hist",
+        "device": "cuda",
+        "objective": "binary:logistic",
+        "eval_metric": "auc"
+    },
+    "fold_summary": [
+        0.9999953751878831,
+        0.9904,
+        0.9909399967949452,
+        0.9977186061801446,
+        1.0
+    ]
+}
