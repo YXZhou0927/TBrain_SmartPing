@@ -1,0 +1,31 @@
+{
+  "_comment": "One-hot encoding mapping for each categorical target column",
+  "one_hot_encoding": {
+    "gender": {
+      "classes": [1, 2],
+      "one_hot_columns": ["gender_1", "gender_2"]
+    },
+    "hold racket handed": {
+      "classes": [1, 2],
+      "one_hot_columns": ["hold racket handed_1", "hold racket handed_2"]
+    },
+    "play years": {
+      "classes": [0, 1, 2],
+      "one_hot_columns": ["play years_0", "play years_1", "play years_2"]
+    },
+    "level": {
+      "classes": [2, 3, 4, 5],
+      "one_hot_columns": ["level_2", "level_3", "level_4", "level_5"]
+    }
+  },
+  "encoder_info": {
+    "encoder_type": "manual",
+    "handle_unknown": "return_error"
+  },
+  "scaler_type": {
+    "gender": "minmax",
+    "hold racket handed": "minmax",
+    "play years": "minmax",
+    "level": "minmax"
+  }
+}
