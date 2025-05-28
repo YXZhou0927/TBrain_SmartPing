@@ -177,17 +177,17 @@ def generate_features(unique_id: str, txt_path: str, feature_dir: str, image_dir
         df['a_radius'] = np.sqrt(df['ax']**2 + df['ay']**2 + df['az']**2)
         df['a_phi1'] = np.arctan2(df['ay'], df['ax'])
         df['a_theta1'] = np.arctan2(df['az'], np.sqrt(df['ax']**2 + df['ay']**2))
-        df['a_phi2'] = np.arctan2(df['az'], df['ax'])
-        df['a_theta2'] = np.arctan2(df['ay'], np.sqrt(df['ax']**2 + df['az']**2))
-        df['a_phi3'] = np.arctan2(df['az'], df['ay'])
-        df['a_theta3'] = np.arctan2(df['ax'], np.sqrt(df['ay']**2 + df['az']**2))
+        # df['a_phi2'] = np.arctan2(df['az'], df['ax'])
+        # df['a_theta2'] = np.arctan2(df['ay'], np.sqrt(df['ax']**2 + df['az']**2))
+        # df['a_phi3'] = np.arctan2(df['az'], df['ay'])
+        # df['a_theta3'] = np.arctan2(df['ax'], np.sqrt(df['ay']**2 + df['az']**2))
         df['g_radius'] = np.sqrt(df['gx']**2 + df['gy']**2 + df['gz']**2)
         df['g_phi1'] = np.arctan2(df['gy'], df['gx'])
         df['g_theta1'] = np.arctan2(df['gz'], np.sqrt(df['gx']**2 + df['gy']**2))
-        df['g_phi2'] = np.arctan2(df['gz'], df['gx'])
-        df['g_theta2'] = np.arctan2(df['gy'], np.sqrt(df['gx']**2 + df['gz']**2))
-        df['g_phi3'] = np.arctan2(df['gz'], df['gy'])
-        df['g_theta3'] = np.arctan2(df['gx'], np.sqrt(df['gy']**2 + df['gz']**2))
+        # df['g_phi2'] = np.arctan2(df['gz'], df['gx'])
+        # df['g_theta2'] = np.arctan2(df['gy'], np.sqrt(df['gx']**2 + df['gz']**2))
+        # df['g_phi3'] = np.arctan2(df['gz'], df['gy'])
+        # df['g_theta3'] = np.arctan2(df['gx'], np.sqrt(df['gy']**2 + df['gz']**2))
 
 
         a_energy = np.sum(df['a_radius']**2) / len(df['a_radius'])
@@ -238,7 +238,8 @@ def generate_features(unique_id: str, txt_path: str, feature_dir: str, image_dir
                     power /= np.sum(power)
                     lag = T
                     feature_dict[f'{col}_seasonal_freq_entropy'] = entropy(power)
-                    feature_dict[f'{col}_seasonal_autocorr1'] = comp_data.autocorr(lag=lag)
+                    autocorr = comp_data.autocorr(lag=lag)
+                    feature_dict[f'{col}_seasonal_autocorr1'] = autocorr if not pd.isna(autocorr) else 1.0
                 elif comp_name == 'resid':
                     #rms = np.sqrt(np.mean(comp_data**2)) # It's equivalent to std
                     zcr = np.sum(np.diff(np.sign(comp_data)) != 0) / len(comp_data)
@@ -298,8 +299,8 @@ def generate_features(unique_id: str, txt_path: str, feature_dir: str, image_dir
 
 if __name__ == "__main__":
     #unique_id = "112"
-    unique_id = "2599"
-    txt_path = f"/home/yanxunzhou/TBrain_SmartPing/data/raw/39_Test_Dataset/test_data/{unique_id}.txt"
+    unique_id = "3080"
+    txt_path = f"/home/yanxunzhou/TBrain_SmartPing/data/raw/test_data/{unique_id}.txt"
     output_csv_dir = "/home/yanxunzhou/TBrain_SmartPing/tests/feature_eda/TimeSeriesFeatures/Test/features"
     output_img_dir = "/home/yanxunzhou/TBrain_SmartPing/tests/feature_eda/TimeSeriesFeatures/Test/images"
     generate_features(unique_id, txt_path, output_csv_dir, output_img_dir)

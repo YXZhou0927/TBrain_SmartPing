@@ -5,9 +5,11 @@ from tqdm import tqdm
 from multiprocessing import Pool, cpu_count
 from typing import Union, List, Dict, Tuple
 import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
+
+CURRENT_DIR = Path(__file__).resolve().parent
+ROOT_DIR = CURRENT_DIR.parent  # Assuming the script is in scripts directory
 from data import load_data
-from features import timeseries_features
+from src.features import timeseries_features
 
 def process_single_uid(args: Tuple[str, str, str]):
     uid, file_path, output_path = args
@@ -47,8 +49,8 @@ if __name__ == "__main__":
     for mode in ["train", "test"]:
         meta_path = root_dir / "data" / "raw" / f"{mode}_info.csv"
         data_folder = root_dir / "data" / "raw" / f"{mode}_data"
-        output_path = root_dir / "data" / "processed" / f"{mode}_features"
+        output_feature_path = root_dir / "data" / "processed" / f"{mode}_features"
 
-        process_data(meta_path, data_folder, output_path)
-        print(f"Processed {mode} data and saved to {output_path}")
+        process_data(meta_path, data_folder, output_feature_path)
+        print(f"Processed {mode} data and saved to {output_feature_path}")
     print("All data processed successfully.")

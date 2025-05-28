@@ -24,6 +24,8 @@ class BadmintonPredictor:
     def prepare_data(self, info, datapath):
         """統一的資料準備函數"""
         datalist = list(Path(datapath).glob('**/*.csv'))
+        datalist.sort(key=lambda x: str(x)) # sort datalist by path name
+        
         X_data = []
         y_data = []
         unique_ids = []
@@ -112,7 +114,7 @@ class BadmintonPredictor:
                 return False  # 若有錯誤則移除
             
         """執行交叉驗證並保存所有模型"""
-        train_info_path = Path('data/raw/39_Training_Dataset/train_info_NramalSignals_V2.csv')
+        train_info_path = Path('data/raw/train_info_No5n12n14.csv')
         data_dir = Path('data/processed/TimeSeriesFeaturesV5/TrainingData/features')
         info = pd.read_csv(str(train_info_path))
         #info = info[info["cut_point"].apply(last_cut_point_valid)].reset_index(drop=True)
@@ -149,7 +151,32 @@ class BadmintonPredictor:
                 X_train, X_val = X_scaled[train_idx], X_scaled[val_idx]
                 y_train = y_df[task].iloc[train_idx].values
                 y_val = y_df[task].iloc[val_idx].values
-                
+
+                # [Analysis] Record train and val y_df to output/analysis/cross_validation_info_{timestamp}.csv
+                # Fromat: fold, source=[train, val], {y_df's dataframe}
+                train_y_df = y_df.iloc[train_idx].copy()
+                train_y_df['source'] = 'train'
+                train_y_df['fold'] = fold
+                train_y_df['task'] = task
+                val_y_df = y_df.iloc[val_idx].copy()
+                val_y_df['source'] = 'val'
+                val_y_df['fold'] = fold
+                val_y_df['task'] = task
+                cv_info = pd.concat([train_y_df, val_y_df], axis=0)
+                cv_info_path = Path('outputs/analysis')
+                cv_info_path.mkdir(parents=True, exist_ok=True)
+                # Get current time in first loop
+                # If current_time is None, set it to the current time
+                if 'current_time' not in locals():
+                    current_time = pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')
+                # Save new fold info to csv in each loop
+                csv_path = cv_info_path / f'cross_validation_info_{current_time}.csv'
+                if not csv_path.exists():
+                    cv_info.to_csv(cv_info_path / f'cross_validation_info_{current_time}.csv', index=False)
+                else:
+                    cv_info.to_csv(cv_info_path / f'cross_validation_info_{current_time}.csv', mode='a', header=False, index=False)
+                # [Analysis] End
+
                 model = RandomForestClassifier(n_estimators=100, random_state=42)
                 
                 # 直接使用原始標籤，不進行變換
@@ -181,7 +208,7 @@ class BadmintonPredictor:
     def generate_submission(self):
         """生成提交檔案，使用所有CV模型的加權集成"""
         # 測試資料
-        test_info_path = Path('data/raw/39_Test_Dataset/test_info.csv')
+        test_info_path = Path('data/raw/test_info.csv')
         test_data_dir = Path('data/processed/TimeSeriesFeaturesV5/TestingData/features')
         test_info = pd.read_csv(str(test_info_path))
         X_test, test_unique_ids = self.prepare_data(pd.DataFrame(), str(test_data_dir))
@@ -233,7 +260,7 @@ class BadmintonPredictor:
             submission[f'level_{level}'] = predictions['level'][:, level-2]
         
         # 確保順序正確
-        sample_submission_path = Path('data/raw/39_Test_Dataset/sample_submission.csv')
+        sample_submission_path = Path('data/raw/sample_submission.csv')
         sample_submission = pd.read_csv(str(sample_submission_path))
         submission = submission.set_index('unique_id').loc[sample_submission['unique_id']].reset_index()
         
