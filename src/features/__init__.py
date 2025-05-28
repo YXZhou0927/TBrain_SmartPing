@@ -10,7 +10,7 @@ if not logger.handlers:
 
 logger.info("📦 載入 features 模組")
 
-import features.timeseries_features
+from . import timeseries_features
 #from .feature_selector import select_top_features
 
 __all__ = ["timeseries_features"]
