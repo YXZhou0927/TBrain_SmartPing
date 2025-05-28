@@ -32,6 +32,8 @@ class PlayerPredictor():
     def prepare_data(self, info, datapath):
         """統一的資料準備函數"""
         datalist = list(Path(datapath).glob('**/*.csv'))
+        datalist.sort(key=lambda x: str(x)) # sort datalist by path name
+        
         X_data = []
         y_data = []
         unique_ids = []

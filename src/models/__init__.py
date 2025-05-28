@@ -15,7 +15,8 @@ logger.info("📦 載入 models 模組")
 #from .evaluate_model import evaluate
 
 # Quickly train, evaluate and predict
-import models.one_click
+from . import one_click
+from .xgb_trainer import XGBTrainer
 
-__all__ = ["one_click"]
+__all__ = ["one_click", "XGBTrainer"]
 __version__ = "0.1.0"
