@@ -1,0 +1,16 @@
+dash==3.0.4
+dash_ag_grid==31.3.1
+imbalanced_learn==0.12.4
+joblib==1.4.2
+matplotlib==3.10.3
+numpy==2.3.0
+optuna==4.3.0
+pandas==2.3.0
+plotly==6.0.1
+psutil==7.0.0
+scikit_learn==1.7.0
+scipy==1.15.3
+seaborn==0.13.2
+statsmodels==0.14.4
+tqdm==4.67.1
+xgboost==3.0.2
